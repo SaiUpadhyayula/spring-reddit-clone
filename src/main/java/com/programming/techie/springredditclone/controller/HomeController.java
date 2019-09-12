@@ -9,8 +9,13 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/home")
 public class HomeController {
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public ModelAndView listAllPosts() {
+        return new ModelAndView("");
+    }
+
+    @GetMapping("/")
+    public ModelAndView listAllCommunities() {
         return new ModelAndView("");
     }
 }
