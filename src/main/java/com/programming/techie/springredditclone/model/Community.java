@@ -19,6 +19,8 @@ public class Community {
     private Long id;
     @NotBlank(message = "Community name is required")
     private String name;
+    @NotBlank(message = "Description is required")
+    private String description;
     @OneToMany
     private List<Post> posts;
 }

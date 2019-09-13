@@ -7,9 +7,11 @@ import com.programming.techie.springredditclone.service.PostService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,14 +22,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PostController {
 
-    private final PostService postService;
-    private final CommentService commentService;
-
-    public PostController(PostService postService,
-                          CommentService commentService) {
-        this.postService = postService;
-        this.commentService = commentService;
-    }
+    private PostService postService;
+    private CommentService commentService;
 
     @GetMapping("/")
     public ModelAndView getPostPage() {
@@ -45,9 +41,16 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ModelAndView createPost(@Valid @ModelAttribute("post") Post post,
-                                   ModelAndView modelAndView,
-                                   BindingResult bindingResult) {
-        return null;
+    public String createPost(@Valid @ModelAttribute("post") Post post,
+                             Model model,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", post);
+            return "/post/create";
+        }
+        postService.save(post);
+        redirectAttributes.addAttribute("id", post.getId());
+        return "redirect:/post/{id}";
     }
 }

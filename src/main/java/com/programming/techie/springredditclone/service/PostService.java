@@ -22,4 +22,8 @@ public class PostService {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("Post Not Found for id - " + id));
     }
+
+    public void save(Post post) {
+        postRepository.save(post);
+    }
 }

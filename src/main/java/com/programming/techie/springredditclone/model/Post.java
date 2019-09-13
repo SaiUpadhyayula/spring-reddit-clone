@@ -1,8 +1,6 @@
 package com.programming.techie.springredditclone.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -11,9 +9,6 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "post")
-@AllArgsConstructor
-@NoArgsConstructor
 public class Post {
     @Id
     @GeneratedValue
