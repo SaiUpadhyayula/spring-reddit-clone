@@ -21,7 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class User {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long userId;
     @NotBlank(message = "Username is required")
     private String username;
     @NotBlank(message = "Password is required")

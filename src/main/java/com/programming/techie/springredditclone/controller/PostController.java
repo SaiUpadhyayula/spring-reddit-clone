@@ -1,56 +1,45 @@
 package com.programming.techie.springredditclone.controller;
 
-import com.programming.techie.springredditclone.model.Comment;
-import com.programming.techie.springredditclone.model.Post;
-import com.programming.techie.springredditclone.service.CommentService;
+import com.programming.techie.springredditclone.dto.PostRequest;
+import com.programming.techie.springredditclone.dto.PostResponse;
+import com.programming.techie.springredditclone.dto.VoteDto;
 import com.programming.techie.springredditclone.service.PostService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
-@RequestMapping("/post")
+import static com.programming.techie.springredditclone.util.ApiPaths.*;
+import static org.springframework.http.HttpStatus.OK;
+
+@RestController
+@RequestMapping(POST_API_MAPPINGS)
 @AllArgsConstructor
-@NoArgsConstructor
 public class PostController {
 
-    private PostService postService;
-    private CommentService commentService;
+    private final PostService postService;
 
-    @GetMapping("/")
-    public ModelAndView getPostPage() {
-        return new ModelAndView("post");
+    @GetMapping(QUERY_ID)
+    public PostResponse getPost(@PathVariable Long id) {
+        return postService.getPost(id);
     }
 
-    @GetMapping("/{id}")
-    public ModelAndView getPost(@PathVariable Long id, ModelAndView modelAndView) {
-        Post post = postService.getPost(id);
-        List<Comment> comments = commentService.getCommentForPost(post);
-        modelAndView.setViewName("post");
-        modelAndView.addObject("post", post);
-        modelAndView.addObject("comments", comments);
-        return modelAndView;
+    @GetMapping(QUERY_ALL)
+    public List<PostResponse> getPost() {
+        return postService.getAllPosts();
     }
 
-    @PostMapping("/create")
-    public String createPost(@Valid @ModelAttribute("post") Post post,
-                             Model model,
-                             BindingResult bindingResult,
-                             RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("post", post);
-            return "/post/create";
-        }
-        postService.save(post);
-        redirectAttributes.addAttribute("id", post.getId());
-        return "redirect:/post/{id}";
+    @PostMapping(CREATE)
+    public ResponseEntity createPost(@Valid @RequestBody PostRequest postRequest) {
+        postService.save(postRequest);
+        return new ResponseEntity(OK);
+    }
+
+    @PostMapping(VOTE_ID)
+    public ResponseEntity vote(@Valid @RequestBody VoteDto voteDto, @PathVariable Long id) {
+        postService.vote(voteDto, id);
+        return new ResponseEntity(OK);
     }
 }

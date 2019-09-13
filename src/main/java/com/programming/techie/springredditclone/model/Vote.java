@@ -1,6 +1,7 @@
 package com.programming.techie.springredditclone.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,14 +12,17 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "vote")
+@Builder
 public class Vote {
     @Id
     @GeneratedValue
     private Long voteId;
-    private Long voteCount = 0L;
     private VoteType voteType;
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "postId", referencedColumnName = "postId")
     private Post post;
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    private User user;
 }
