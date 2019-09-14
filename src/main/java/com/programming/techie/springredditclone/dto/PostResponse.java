@@ -18,4 +18,6 @@ public class PostResponse {
     private String userName;
     private boolean upVote;
     private boolean downVote;
+    private String subredditName;
+    private Integer commentNum;
 }

@@ -8,6 +8,7 @@ import com.programming.techie.springredditclone.exception.SubredditNotFoundExcep
 import com.programming.techie.springredditclone.model.Post;
 import com.programming.techie.springredditclone.model.Subreddit;
 import com.programming.techie.springredditclone.model.Vote;
+import com.programming.techie.springredditclone.repository.CommentRepository;
 import com.programming.techie.springredditclone.repository.PostRepository;
 import com.programming.techie.springredditclone.repository.SubredditRepository;
 import com.programming.techie.springredditclone.repository.VoteRepository;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.programming.techie.springredditclone.model.VoteType.UPVOTE;
+import static com.programming.techie.springredditclone.util.Constants.POST_NOT_FOUND_FOR_ID;
 import static com.programming.techie.springredditclone.util.Constants.SUBREDDIT_NOT_FOUND_WITH_ID;
 
 @Service
@@ -30,12 +32,15 @@ public class PostService {
     private final PostRepository postRepository;
     private final VoteRepository voteRepository;
     private final SubredditRepository subredditRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Post Not Found for id - " + id));
-        return mapToDto(post);
+                .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND_FOR_ID + id));
+        PostResponse postResponse = mapToDto(post);
+        postResponse.setCommentNum(commentRepository.findByPost(post).size());
+        return postResponse;
     }
 
     static PostResponse mapToDto(Post post) {
@@ -44,6 +49,7 @@ public class PostService {
                 .description(post.getDescription())
                 .url(post.getUrl())
                 .userName(post.getUser().getUsername())
+                .subredditName(post.getSubreddit().getName())
                 .build();
     }
 
@@ -57,7 +63,8 @@ public class PostService {
                 .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID
                         + postRequest.getSubredditId()));
 
-        return Post.builder().postName(postRequest.getPostName())
+        return Post.builder()
+                .postName(postRequest.getPostName())
                 .description(postRequest.getDescription())
                 .url(postRequest.getUrl())
                 .createdDate(Instant.now())

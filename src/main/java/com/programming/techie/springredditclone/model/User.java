@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -17,7 +20,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,7 +32,7 @@ public class User {
     @NotEmpty(message = "Email is required")
     private String email;
     private Instant created;
-    private Boolean enabled;
+    private boolean enabled;
     @OneToMany
     private List<Comment> comments;
     @OneToMany
