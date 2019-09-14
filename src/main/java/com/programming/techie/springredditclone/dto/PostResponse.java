@@ -14,7 +14,7 @@ public class PostResponse {
     private String postName;
     private String url;
     private String description;
-    private List<Vote> votes;
+    private Integer votesNum;
     private String userName;
     private boolean upVote;
     private boolean downVote;

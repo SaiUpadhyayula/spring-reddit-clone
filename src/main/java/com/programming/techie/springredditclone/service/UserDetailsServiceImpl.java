@@ -11,8 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+
+import static java.util.Collections.singletonList;
 
 @Service
 @AllArgsConstructor
@@ -29,12 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(String role) {
-        return Collections.singletonList(new SimpleGrantedAuthority(role));
-    }
-
-    UserDetails loadUserByName(String username) throws IllegalAccessException {
-        User user = userRepository.findByUsername(username).orElseThrow(IllegalAccessException::new);
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, getAuthorities("USER"));
+        return singletonList(new SimpleGrantedAuthority(role));
     }
 }

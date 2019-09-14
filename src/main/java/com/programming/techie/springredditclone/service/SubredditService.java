@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.programming.techie.springredditclone.util.Constants.SUBREDDIT_NOT_FOUND_WITH_ID;
+import static java.time.Instant.now;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -20,6 +21,8 @@ public class SubredditService {
 
     private final SubredditRepository subredditRepository;
     private final PostRepository postRepository;
+    private final PostService postService;
+    private final AuthService authService;
 
     public List<SubredditDto> getAll() {
         return subredditRepository.findAll()
@@ -39,7 +42,20 @@ public class SubredditService {
                 .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + id));
         return postRepository.findAllBySubreddit(subreddit)
                 .stream()
-                .map(PostService::mapToDto)
+                .map(postService::mapToDto)
                 .collect(toList());
+    }
+
+    public SubredditDto save(SubredditDto subredditDto) {
+        Subreddit subreddit = subredditRepository.save(mapToSubreddit(subredditDto));
+        subredditDto.setId(subreddit.getId());
+        return subredditDto;
+    }
+
+    private Subreddit mapToSubreddit(SubredditDto subredditDto) {
+        return Subreddit.builder().name(subredditDto.getName())
+                .description(subredditDto.getDescription())
+                .user(authService.getCurrentUser())
+                .createdDate(now()).build();
     }
 }
