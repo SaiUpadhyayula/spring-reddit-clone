@@ -31,6 +31,11 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    @GetMapping(QUERY_BY_USER_SUBREDDIT)
+    public List<PostResponse> getPostsBySubreddit() {
+        return postService.getPostsBySubreddit();
+    }
+
     @PostMapping(CREATE)
     public ResponseEntity createPost(@Valid @RequestBody PostRequest postRequest) {
         postService.save(postRequest);

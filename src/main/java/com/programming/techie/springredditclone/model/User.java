@@ -37,4 +37,6 @@ public class User {
     private List<Comment> comments;
     @OneToMany
     private List<Post> posts;
+    @OneToMany
+    private List<Subreddit> subreddits;
 }

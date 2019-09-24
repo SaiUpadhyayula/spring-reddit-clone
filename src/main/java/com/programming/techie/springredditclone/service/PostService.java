@@ -6,27 +6,22 @@ import com.programming.techie.springredditclone.dto.VoteDto;
 import com.programming.techie.springredditclone.exception.PostNotFoundException;
 import com.programming.techie.springredditclone.exception.SpringRedditException;
 import com.programming.techie.springredditclone.exception.SubredditNotFoundException;
-import com.programming.techie.springredditclone.model.Post;
-import com.programming.techie.springredditclone.model.Subreddit;
-import com.programming.techie.springredditclone.model.Vote;
-import com.programming.techie.springredditclone.model.VoteType;
-import com.programming.techie.springredditclone.repository.CommentRepository;
-import com.programming.techie.springredditclone.repository.PostRepository;
-import com.programming.techie.springredditclone.repository.SubredditRepository;
-import com.programming.techie.springredditclone.repository.VoteRepository;
+import com.programming.techie.springredditclone.model.*;
+import com.programming.techie.springredditclone.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.programming.techie.springredditclone.model.VoteType.UPVOTE;
 import static com.programming.techie.springredditclone.util.Constants.POST_NOT_FOUND_FOR_ID;
 import static com.programming.techie.springredditclone.util.Constants.SUBREDDIT_NOT_FOUND_WITH_ID;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
@@ -37,6 +32,7 @@ public class PostService {
     private final SubredditRepository subredditRepository;
     private final CommentRepository commentRepository;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
@@ -50,12 +46,42 @@ public class PostService {
         return postRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Transactional
     public void save(@Valid PostRequest postRequest) {
         postRepository.save(mapToPost(postRequest));
+    }
+
+    @Transactional
+    public synchronized void vote(VoteDto voteDto, Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException("Post Not Found with ID - " + id));
+        Optional<Vote> voteByPostAndUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
+        if (voteByPostAndUser.isPresent()) {
+            if (voteByPostAndUser.get().getVoteType().equals(voteDto.getVoteType())) {
+                throw new SpringRedditException("You have already " + voteDto.getVoteType() + "'d for this post");
+            }
+        }
+        int count = 0;
+        if (UPVOTE.equals(voteDto.getVoteType())) {
+            count = post.getVoteCount() + 1;
+        } else {
+            count = post.getVoteCount() - 1;
+        }
+        voteRepository.save(mapToVote(voteDto, post));
+        post.setVoteCount(count);
+        postRepository.save(post);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> getPostsBySubreddit() {
+        User currentUser = authService.getCurrentUser();
+        List<Subreddit> subreddits = currentUser.getSubreddits();
+        List<Post> subscribedPosts = new ArrayList<>();
+        subreddits.forEach(subreddit -> subscribedPosts.addAll(postRepository.findAllBySubreddit(subreddit)));
+        return subscribedPosts.stream().map(this::mapToDto).collect(toList());
     }
 
     PostResponse mapToDto(Post post) {
@@ -68,13 +94,15 @@ public class PostService {
                 .votesNum(post.getVoteCount())
                 .commentNum(commentRepository.findByPost(post).size())
                 .build();
-        Optional<Vote> voteForPostByUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
-        if (voteForPostByUser.isPresent()) {
-            VoteType voteType = voteForPostByUser.get().getVoteType();
-            if (voteType.equals(UPVOTE))
-                postResponse.setUpVote(true);
-            else
-                postResponse.setDownVote(true);
+        if (authService.isLoggedIn()) {
+            Optional<Vote> voteForPostByUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
+            if (voteForPostByUser.isPresent()) {
+                VoteType voteType = voteForPostByUser.get().getVoteType();
+                if (voteType.equals(UPVOTE))
+                    postResponse.setUpVote(true);
+                else
+                    postResponse.setDownVote(true);
+            }
         }
         return postResponse;
     }
@@ -92,26 +120,6 @@ public class PostService {
                 .subreddit(subreddit)
                 .user(authService.getCurrentUser())
                 .build();
-    }
-
-    public synchronized void vote(VoteDto voteDto, Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Post Not Found with ID - " + id));
-        Optional<Vote> votebyPostAndUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
-        if (votebyPostAndUser.isPresent()) {
-            if (votebyPostAndUser.get().getVoteType().equals(voteDto.getVoteType())) {
-                throw new SpringRedditException("You have already " + voteDto.getVoteType() + "'d for this post");
-            }
-        }
-        int count = 0;
-        if (UPVOTE.equals(voteDto.getVoteType())) {
-            count = post.getVoteCount() + 1;
-        } else {
-            count = post.getVoteCount() - 1;
-        }
-        voteRepository.save(mapToVote(voteDto, post));
-        post.setVoteCount(count);
-        postRepository.save(post);
     }
 
     private Vote mapToVote(VoteDto voteDto, Post post) {

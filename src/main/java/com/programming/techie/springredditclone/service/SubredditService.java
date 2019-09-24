@@ -4,10 +4,13 @@ import com.programming.techie.springredditclone.dto.PostResponse;
 import com.programming.techie.springredditclone.dto.SubredditDto;
 import com.programming.techie.springredditclone.exception.SubredditNotFoundException;
 import com.programming.techie.springredditclone.model.Subreddit;
+import com.programming.techie.springredditclone.model.User;
 import com.programming.techie.springredditclone.repository.PostRepository;
 import com.programming.techie.springredditclone.repository.SubredditRepository;
+import com.programming.techie.springredditclone.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,7 +26,9 @@ public class SubredditService {
     private final PostRepository postRepository;
     private final PostService postService;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<SubredditDto> getAll() {
         return subredditRepository.findAll()
                 .stream()
@@ -37,6 +42,7 @@ public class SubredditService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts(Long id) {
         Subreddit subreddit = subredditRepository.findById(id)
                 .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + id));
@@ -46,6 +52,7 @@ public class SubredditService {
                 .collect(toList());
     }
 
+    @Transactional
     public SubredditDto save(SubredditDto subredditDto) {
         Subreddit subreddit = subredditRepository.save(mapToSubreddit(subredditDto));
         subredditDto.setId(subreddit.getId());
@@ -57,5 +64,14 @@ public class SubredditService {
                 .description(subredditDto.getDescription())
                 .user(authService.getCurrentUser())
                 .createdDate(now()).build();
+    }
+
+    @Transactional
+    public void joinSubreddit(SubredditDto subredditDto) {
+        User currentUser = authService.getCurrentUser();
+        Subreddit subreddit = subredditRepository.findById(subredditDto.getId())
+                .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + subredditDto.getId()));
+        currentUser.getSubreddits().add(subreddit);
+        userRepository.save(currentUser);
     }
 }
