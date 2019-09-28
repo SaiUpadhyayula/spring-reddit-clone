@@ -3,12 +3,12 @@ package com.programming.techie.springredditclone.controller;
 import com.programming.techie.springredditclone.dto.CommentsDto;
 import com.programming.techie.springredditclone.service.CommentService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -19,6 +19,12 @@ public class CommentsController {
 
     @GetMapping("/query/{postId}")
     public List<CommentsDto> getAllCommentsForPost(@PathVariable Long postId) {
-        return commentService.getAll(postId);
+        return commentService.getCommentByPost(postId);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity createComment(@RequestBody CommentsDto commentsDto) {
+        commentService.createComment(commentsDto);
+        return new ResponseEntity(OK);
     }
 }

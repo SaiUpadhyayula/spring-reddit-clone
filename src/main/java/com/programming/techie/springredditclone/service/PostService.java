@@ -6,7 +6,10 @@ import com.programming.techie.springredditclone.dto.VoteDto;
 import com.programming.techie.springredditclone.exception.PostNotFoundException;
 import com.programming.techie.springredditclone.exception.SpringRedditException;
 import com.programming.techie.springredditclone.exception.SubredditNotFoundException;
-import com.programming.techie.springredditclone.model.*;
+import com.programming.techie.springredditclone.model.Post;
+import com.programming.techie.springredditclone.model.Subreddit;
+import com.programming.techie.springredditclone.model.Vote;
+import com.programming.techie.springredditclone.model.VoteType;
 import com.programming.techie.springredditclone.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,16 +78,16 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getPostsBySubreddit() {
-        User currentUser = authService.getCurrentUser();
-        List<Subreddit> subreddits = currentUser.getSubreddits();
-        List<Post> subscribedPosts = new ArrayList<>();
-        subreddits.forEach(subreddit -> subscribedPosts.addAll(postRepository.findAllBySubreddit(subreddit)));
-        return subscribedPosts.stream().map(this::mapToDto).collect(toList());
+    public List<PostResponse> getPostsBySubreddit(Long subredditId) {
+        Subreddit subreddit = subredditRepository.findById(subredditId)
+                .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + subredditId));
+        List<Post> posts = postRepository.findAllBySubreddit(subreddit);
+        return posts.stream().map(this::mapToDto).collect(toList());
     }
 
     PostResponse mapToDto(Post post) {
         PostResponse postResponse = PostResponse.builder()
+                .id(post.getPostId())
                 .postName(post.getPostName())
                 .description(post.getDescription())
                 .url(post.getUrl())

@@ -65,13 +65,4 @@ public class SubredditService {
                 .user(authService.getCurrentUser())
                 .createdDate(now()).build();
     }
-
-    @Transactional
-    public void joinSubreddit(SubredditDto subredditDto) {
-        User currentUser = authService.getCurrentUser();
-        Subreddit subreddit = subredditRepository.findById(subredditDto.getId())
-                .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + subredditDto.getId()));
-        currentUser.getSubreddits().add(subreddit);
-        userRepository.save(currentUser);
-    }
 }

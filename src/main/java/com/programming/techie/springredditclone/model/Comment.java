@@ -1,6 +1,7 @@
 package com.programming.techie.springredditclone.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 public class Comment {
     @Id
@@ -26,4 +28,6 @@ public class Comment {
     @ManyToOne
     private Post post;
     private Instant createdDate;
+    @ManyToOne
+    private User user;
 }

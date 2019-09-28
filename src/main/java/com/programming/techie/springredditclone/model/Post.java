@@ -24,6 +24,7 @@ public class Post {
     @Nullable
     private String url;
     @Nullable
+    @Lob
     private String description;
     private Integer voteCount;
     @ManyToOne

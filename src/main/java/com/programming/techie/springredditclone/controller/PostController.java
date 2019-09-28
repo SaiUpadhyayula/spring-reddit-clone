@@ -32,8 +32,8 @@ public class PostController {
     }
 
     @GetMapping(QUERY_BY_USER_SUBREDDIT)
-    public List<PostResponse> getPostsBySubreddit() {
-        return postService.getPostsBySubreddit();
+    public List<PostResponse> getPostsBySubreddit(@RequestBody Long subredditId) {
+        return postService.getPostsBySubreddit(subredditId);
     }
 
     @PostMapping(CREATE)

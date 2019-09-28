@@ -34,10 +34,4 @@ public class SubredditController {
     public SubredditDto create(@RequestBody @Valid SubredditDto subredditDto) {
         return subredditService.save(subredditDto);
     }
-
-    @PostMapping(JOIN_SUBREDDIT)
-    public ResponseEntity joinSubreddit(@Valid @RequestBody SubredditDto subredditDto) {
-        subredditService.joinSubreddit(subredditDto);
-        return new ResponseEntity(OK);
-    }
 }
