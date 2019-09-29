@@ -67,6 +67,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JWT related dependencies-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -84,6 +85,8 @@
             <scope>runtime</scope>
             <version>0.10.5</version>
         </dependency>
+        <!-- For Displaying time as Relative Time Ago ("Posted 1 Day ago"),
+         as this is a Kotlin library, we also need Kotlin runtime libraries-->
         <dependency>
             <groupId>com.github.marlonlom</groupId>
             <artifactId>timeago</artifactId>
