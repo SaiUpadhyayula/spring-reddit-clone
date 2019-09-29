@@ -4,9 +4,12 @@ import com.programming.techie.springredditclone.dto.CommentsDto;
 import com.programming.techie.springredditclone.exception.PostNotFoundException;
 import com.programming.techie.springredditclone.model.Comment;
 import com.programming.techie.springredditclone.model.Post;
+import com.programming.techie.springredditclone.model.User;
 import com.programming.techie.springredditclone.repository.CommentRepository;
 import com.programming.techie.springredditclone.repository.PostRepository;
+import com.programming.techie.springredditclone.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +18,9 @@ import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.util.List;
 
+import static com.github.marlonlom.utilities.timeago.TimeAgo.using;
 import static com.programming.techie.springredditclone.util.Constants.POST_NOT_FOUND_FOR_ID;
 import static com.programming.techie.springredditclone.util.Constants.POST_URL;
-import static com.programming.techie.springredditclone.util.DateUtils.calcDuration;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -28,6 +31,7 @@ public class CommentService {
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public List<CommentsDto> getCommentByPost(Long postId) {
@@ -52,7 +56,7 @@ public class CommentService {
     private CommentsDto mapToDto(Comment comment) {
         return CommentsDto.builder().id(comment.getId())
                 .text(comment.getText())
-                .duration(calcDuration(comment.getCreatedDate()))
+                .duration(using(comment.getCreatedDate().toEpochMilli()))
                 .username(comment.getUser().getUsername())
                 .build();
     }
@@ -68,5 +72,14 @@ public class CommentService {
                 .post(post)
                 .user(authService.getCurrentUser())
                 .build();
+    }
+
+    public List<CommentsDto> getCommentsByUser(String userName) {
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(() -> new UsernameNotFoundException(userName));
+        return commentRepository.findAllByUser(user)
+                .stream()
+                .map(this::mapToDto)
+                .collect(toList());
     }
 }

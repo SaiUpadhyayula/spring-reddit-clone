@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.programming.techie.springredditclone.util.ApiPaths.QUERY_POST_ID;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -17,9 +18,14 @@ public class CommentsController {
 
     private final CommentService commentService;
 
-    @GetMapping("/query/{postId}")
+    @GetMapping(QUERY_POST_ID)
     public List<CommentsDto> getAllCommentsForPost(@PathVariable Long postId) {
         return commentService.getCommentByPost(postId);
+    }
+
+    @GetMapping("/query/user/{userName}")
+    public List<CommentsDto> getAllCommentsByUser(@PathVariable String userName) {
+        return commentService.getCommentsByUser(userName);
     }
 
     @PostMapping("/create")

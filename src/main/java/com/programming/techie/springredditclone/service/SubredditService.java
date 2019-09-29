@@ -4,7 +4,6 @@ import com.programming.techie.springredditclone.dto.PostResponse;
 import com.programming.techie.springredditclone.dto.SubredditDto;
 import com.programming.techie.springredditclone.exception.SubredditNotFoundException;
 import com.programming.techie.springredditclone.model.Subreddit;
-import com.programming.techie.springredditclone.model.User;
 import com.programming.techie.springredditclone.repository.PostRepository;
 import com.programming.techie.springredditclone.repository.SubredditRepository;
 import com.programming.techie.springredditclone.repository.UserRepository;
@@ -38,6 +37,7 @@ public class SubredditService {
 
     private SubredditDto mapToDto(Subreddit subreddit) {
         return SubredditDto.builder().name(subreddit.getName())
+                .id(subreddit.getId())
                 .postCount(subreddit.getPosts().size())
                 .build();
     }
@@ -60,9 +60,15 @@ public class SubredditService {
     }
 
     private Subreddit mapToSubreddit(SubredditDto subredditDto) {
-        return Subreddit.builder().name(subredditDto.getName())
+        return Subreddit.builder().name("/r/" + subredditDto.getName())
                 .description(subredditDto.getDescription())
                 .user(authService.getCurrentUser())
                 .createdDate(now()).build();
+    }
+
+    public SubredditDto getSubreddit(Long id) {
+        Subreddit subreddit = subredditRepository.findById(id)
+                .orElseThrow(() -> new SubredditNotFoundException(SUBREDDIT_NOT_FOUND_WITH_ID + id));
+        return mapToDto(subreddit);
     }
 }

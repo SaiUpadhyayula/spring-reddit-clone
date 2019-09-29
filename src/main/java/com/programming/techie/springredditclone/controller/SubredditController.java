@@ -4,14 +4,12 @@ import com.programming.techie.springredditclone.dto.PostResponse;
 import com.programming.techie.springredditclone.dto.SubredditDto;
 import com.programming.techie.springredditclone.service.SubredditService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 import static com.programming.techie.springredditclone.util.ApiPaths.*;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(SUBREDDIT_API_MAPPING)
@@ -28,6 +26,11 @@ public class SubredditController {
     @GetMapping(ID_POSTS_ALL)
     public List<PostResponse> getAllPostsInSubreddit(@PathVariable Long id) {
         return subredditService.getAllPosts(id);
+    }
+
+    @GetMapping(QUERY_ID)
+    public SubredditDto getSubreddit(@PathVariable Long id) {
+        return subredditService.getSubreddit(id);
     }
 
     @PostMapping(CREATE)

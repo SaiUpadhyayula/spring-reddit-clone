@@ -2,7 +2,6 @@ package com.programming.techie.springredditclone.controller;
 
 import com.programming.techie.springredditclone.dto.PostRequest;
 import com.programming.techie.springredditclone.dto.PostResponse;
-import com.programming.techie.springredditclone.dto.VoteDto;
 import com.programming.techie.springredditclone.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,20 +30,19 @@ public class PostController {
         return postService.getAllPosts();
     }
 
-    @GetMapping(QUERY_BY_USER_SUBREDDIT)
-    public List<PostResponse> getPostsBySubreddit(@RequestBody Long subredditId) {
+    @GetMapping(QUERY_BY_SUBREDDIT)
+    public List<PostResponse> getPostsBySubreddit(@PathVariable Long subredditId) {
         return postService.getPostsBySubreddit(subredditId);
+    }
+
+    @GetMapping(QUERY_BY_USERNAME)
+    public List<PostResponse> getPostsByUsername(@PathVariable String name) {
+        return postService.getPostsByUsername(name);
     }
 
     @PostMapping(CREATE)
     public ResponseEntity createPost(@Valid @RequestBody PostRequest postRequest) {
         postService.save(postRequest);
-        return new ResponseEntity(OK);
-    }
-
-    @PostMapping(VOTE_ID)
-    public ResponseEntity vote(@Valid @RequestBody VoteDto voteDto, @PathVariable Long id) {
-        postService.vote(voteDto, id);
         return new ResponseEntity(OK);
     }
 }

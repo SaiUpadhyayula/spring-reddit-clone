@@ -18,4 +18,5 @@ public class PostResponse {
     private boolean downVote;
     private String subredditName;
     private Integer commentNum;
+    private String duration;
 }
