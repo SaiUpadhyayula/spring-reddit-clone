@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.Instant;
 
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Data
 @AllArgsConstructor
@@ -18,10 +18,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class VerificationToken {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = SEQUENCE)
     private Long id;
     private String token;
-    @OneToOne(fetch = EAGER)
+    @OneToOne(fetch = LAZY)
     private User user;
     private Instant expiryDate;
 }

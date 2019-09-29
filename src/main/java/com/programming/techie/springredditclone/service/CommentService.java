@@ -3,6 +3,7 @@ package com.programming.techie.springredditclone.service;
 import com.programming.techie.springredditclone.dto.CommentsDto;
 import com.programming.techie.springredditclone.exception.PostNotFoundException;
 import com.programming.techie.springredditclone.model.Comment;
+import com.programming.techie.springredditclone.model.NotificationEmail;
 import com.programming.techie.springredditclone.model.Post;
 import com.programming.techie.springredditclone.model.User;
 import com.programming.techie.springredditclone.repository.CommentRepository;
@@ -13,8 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class CommentService {
         commentRepository.save(mapToComment(commentsDto, post));
         String message = mailContentBuilder.build(post.getUser().getUsername() + " posted a comment on your post."
                 + POST_URL + post.getPostId());
-        sendCommentNotification(message, post.getUser().getEmail());
+        sendCommentNotification(message, post.getUser());
     }
 
     private CommentsDto mapToDto(Comment comment) {
@@ -61,8 +60,8 @@ public class CommentService {
                 .build();
     }
 
-    private void sendCommentNotification(String message, @Email @NotEmpty(message = "Email is required") String email) {
-        mailService.sendMail(email, message);
+    private void sendCommentNotification(String message, User user) {
+        mailService.sendMail(new NotificationEmail(user.getUsername() + " Commented on your post", user.getEmail(), message));
     }
 
     private Comment mapToComment(CommentsDto commentsDto, Post post) {

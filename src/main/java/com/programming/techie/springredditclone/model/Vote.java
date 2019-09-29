@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,14 +18,14 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Vote {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = SEQUENCE)
     private Long voteId;
     private VoteType voteType;
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "postId", referencedColumnName = "postId")
     private Post post;
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 }

@@ -10,6 +10,9 @@ import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,15 +20,15 @@ import java.util.List;
 @Builder
 public class Subreddit {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = SEQUENCE)
     private Long id;
     @NotBlank(message = "Community name is required")
     private String name;
     @NotBlank(message = "Description is required")
     private String description;
-    @OneToMany
+    @OneToMany(fetch = LAZY)
     private List<Post> posts;
     private Instant createdDate;
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private User user;
 }

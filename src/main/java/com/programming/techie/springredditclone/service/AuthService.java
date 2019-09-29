@@ -4,6 +4,7 @@ import com.programming.techie.springredditclone.dto.AuthenticationResponse;
 import com.programming.techie.springredditclone.dto.LoginRequest;
 import com.programming.techie.springredditclone.dto.RegisterRequest;
 import com.programming.techie.springredditclone.exception.SpringRedditException;
+import com.programming.techie.springredditclone.model.NotificationEmail;
 import com.programming.techie.springredditclone.model.User;
 import com.programming.techie.springredditclone.model.VerificationToken;
 import com.programming.techie.springredditclone.repository.UserRepository;
@@ -11,7 +12,6 @@ import com.programming.techie.springredditclone.repository.VerificationTokenRepo
 import com.programming.techie.springredditclone.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,8 +56,7 @@ public class AuthService {
         String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
                 + ACTIVATION_EMAIL + "/" + token);
 
-        mailService.sendMail(user.getEmail(), message);
-        log.info("Activation email sent!!");
+        mailService.sendMail(new NotificationEmail("Please Activate your account", user.getEmail(), message));
     }
 
     private String generateVerificationToken(User user) {
