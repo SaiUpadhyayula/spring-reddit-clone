@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.SEQUENCE;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +19,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 public class Comment {
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @NotEmpty
     private String text;

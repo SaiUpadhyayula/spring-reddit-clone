@@ -1,6 +1,5 @@
 package com.programming.techie.springredditclone.repository;
 
-import com.programming.techie.springredditclone.dto.PostResponse;
 import com.programming.techie.springredditclone.model.Post;
 import com.programming.techie.springredditclone.model.Subreddit;
 import com.programming.techie.springredditclone.model.User;
