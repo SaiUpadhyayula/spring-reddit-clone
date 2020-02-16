@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class PostRequest {
     private Long postId;
+    @NotBlank(message = "Subreddit Name is required")
     private String subredditName;
     @NotBlank(message = "Post Name is required")
     private String postName;

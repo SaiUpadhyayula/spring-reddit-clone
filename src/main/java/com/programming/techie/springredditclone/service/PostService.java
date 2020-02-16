@@ -61,6 +61,7 @@ public class PostService {
         return posts.stream().map(this::mapToDto).collect(toList());
     }
 
+    //TODO: Replace mapToDto with PostMapper
     PostResponse mapToDto(Post post) {
         PostResponse postResponse = PostResponse.builder()
                 .id(post.getPostId())
