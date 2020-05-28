@@ -33,7 +33,7 @@ public class JwtProvider {
             InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
             keyStore.load(resourceAsStream, "secret".toCharArray());
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            throw new SpringRedditException("Exception occurred while loading keystore");
+            throw new SpringRedditException("Exception occurred while loading keystore", e);
         }
 
     }
@@ -61,7 +61,7 @@ public class JwtProvider {
         try {
             return (PrivateKey) keyStore.getKey("springblog", "secret".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new SpringRedditException("Exception occured while retrieving public key from keystore");
+            throw new SpringRedditException("Exception occured while retrieving public key from keystore", e);
         }
     }
 
@@ -75,7 +75,7 @@ public class JwtProvider {
             return keyStore.getCertificate("springblog").getPublicKey();
         } catch (KeyStoreException e) {
             throw new SpringRedditException("Exception occured while " +
-                    "retrieving public key from keystore");
+                    "retrieving public key from keystore", e);
         }
     }
 
