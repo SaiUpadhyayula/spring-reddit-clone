@@ -4,8 +4,9 @@ Reddit clone built using Spring Boot, Spring Security with JPA Authentication, S
 # NOTE
 This source code is used as a starting point for my other tutorials which shows how to deploy the Spring Boot and Angular app to Heroku and Testing Spring boot applications:
 
-The complete source code for the Deploy Spring Boot and Angular to Heroku can be found at https://github.com/SaiUpadhyayula/spring-reddit-clone-heroku-deployment
-The complete source code for the Testing Spring Boot Applications can be found at https://github.com/SaiUpadhyayula/spring-boot-testing-reddit-clone
+The complete source code for the ![Deploy Spring Boot and Angular to Heroku](https://www.youtube.com/watch?v=y_idn12FB18&t=8s) can be found at https://github.com/SaiUpadhyayula/spring-reddit-clone-heroku-deployment
+
+The complete source code for the ![Testing Spring Boot Applications](https://youtu.be/--nQfs67zCM) can be found at https://github.com/SaiUpadhyayula/spring-boot-testing-reddit-clone
 
 # Tutorial
 https://programmingtechie.com/2019/09/30/build-a-full-stack-reddit-clone-with-spring-boot-and-angular-part-1/
