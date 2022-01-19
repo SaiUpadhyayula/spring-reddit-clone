@@ -1,6 +1,14 @@
 # spring-reddit-clone
 Reddit clone built using Spring Boot, Spring Security with JPA Authentication, Spring Data JPA with MySQL, Spring MVC. The frontend is built using Angular - You can find the frontend source code here - https://github.com/SaiUpadhyayula/angular-reddit-clone
 
+# Recent Changes
+
+- Updated to latest spring boot version - 2.6.2
+- Added 'spring-boot-starter-validation' dependency in pom.xml file to support Java Bean Validation annotations.
+- *IMPORTANT*: Removed Legacy JWT Authentication Mechanism and replaced it with latest Spring Security JWT Support.
+- Adapted SecurityConfig.java class according to latest Spring Security configuration settings, see method configure(AuthenticationManagerBuilder) inside SecurityConfig.java class
+
+
 # NOTE
 This source code is used as a starting point for my other tutorials which shows how to deploy the Spring Boot and Angular app to Heroku and Testing Spring boot applications:
 
