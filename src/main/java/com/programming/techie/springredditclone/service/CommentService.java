@@ -2,6 +2,7 @@ package com.programming.techie.springredditclone.service;
 
 import com.programming.techie.springredditclone.dto.CommentsDto;
 import com.programming.techie.springredditclone.exceptions.PostNotFoundException;
+import com.programming.techie.springredditclone.exceptions.SpringRedditException;
 import com.programming.techie.springredditclone.mapper.CommentMapper;
 import com.programming.techie.springredditclone.model.Comment;
 import com.programming.techie.springredditclone.model.NotificationEmail;
@@ -58,5 +59,12 @@ public class CommentService {
                 .stream()
                 .map(commentMapper::mapToDto)
                 .collect(toList());
+    }
+
+    public boolean containsSwearWords(String comment) {
+        if (comment.contains("shit")) {
+            throw new SpringRedditException("Comments contains unacceptable language");
+        }
+        return false;
     }
 }
