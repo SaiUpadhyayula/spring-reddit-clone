@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 @AllArgsConstructor
 public class CommentService {
@@ -49,7 +47,7 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId.toString()));
         return commentRepository.findByPost(post)
                 .stream()
-                .map(commentMapper::mapToDto).collect(toList());
+                .map(commentMapper::mapToDto).toList();
     }
 
     public List<CommentsDto> getAllCommentsForUser(String userName) {
@@ -58,7 +56,7 @@ public class CommentService {
         return commentRepository.findAllByUser(user)
                 .stream()
                 .map(commentMapper::mapToDto)
-                .collect(toList());
+                .toList();
     }
 
     public boolean containsSwearWords(String comment) {

@@ -51,7 +51,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("Should Retrieve Post by Id")
-    public void shouldFindPostById() {
+    void shouldFindPostById() {
         Post post = new Post(123L, "First Post", "http://url.site", "Test",
                 0, null, Instant.now(), null);
         PostResponse expectedPostResponse = new PostResponse(123L, "First Post", "http://url.site", "Test",
@@ -68,7 +68,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("Should Save Posts")
-    public void shouldSavePosts() {
+    void shouldSavePosts() {
         User currentUser = new User(123L, "test user", "secret password", "user@email.com", Instant.now(), true);
         Subreddit subreddit = new Subreddit(123L, "First Subreddit", "Subreddit Description", emptyList(), Instant.now(), currentUser);
         Post post = new Post(123L, "First Post", "http://url.site", "Test",

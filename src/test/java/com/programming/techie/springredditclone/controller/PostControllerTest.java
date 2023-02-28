@@ -1,9 +1,7 @@
 package com.programming.techie.springredditclone.controller;
 
 import com.programming.techie.springredditclone.dto.PostResponse;
-import com.programming.techie.springredditclone.security.JwtProvider;
 import com.programming.techie.springredditclone.service.PostService;
-import com.programming.techie.springredditclone.service.UserDetailsServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static java.util.Arrays.asList;
@@ -23,16 +22,13 @@ class PostControllerTest {
 
     @MockBean
     private PostService postService;
-    @MockBean
-    private UserDetailsServiceImpl userDetailsService;
-    @MockBean
-    private JwtProvider jwtProvider;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     @DisplayName("Should List All Posts When making GET request to endpoint - /api/posts/")
+    @WithMockUser(username = "test")
     void shouldCreatePost() throws Exception {
         PostResponse postRequest1 = new PostResponse(1L, "Post Name", "http://url.site", "Description", "User 1",
                 "Subreddit Name", 0, 0, "1 day ago", false, false);
@@ -41,7 +37,7 @@ class PostControllerTest {
 
         Mockito.when(postService.getAllPosts()).thenReturn(asList(postRequest1, postRequest2));
 
-        mockMvc.perform(get("/api/posts/"))
+        mockMvc.perform(get("/api/posts"))
                 .andExpect(status().is(200))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.size()", Matchers.is(2)))
